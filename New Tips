@@ -35,3 +35,12 @@ export default function Home(props) {
   props.coffeStore 
   // use this to preRender
 }
+
+## getStaticPaths() for dynamic route
+Its allow us to define a list of path to render in html at build time.
+Runs on build time.
+Also run in server-side.
+
+1. It should be a page file. export from page file.
+2. Only for dynamic paths/route.
+3. Page must also implement getStaticProps().
