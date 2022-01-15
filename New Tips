@@ -1,0 +1,37 @@
+All Front-End Rendering Technique
+
+1. Static Site Generation (SSG) ==>   getStaticProps()
+    Allows to generate html file at build time.
+    Store it to CDN.
+    ({ preRender })
+
+2. Incrimental Site Generation (ISG) ==>   getStaticProps() with revalidate
+    Allows to generate html file at a specific interval.
+    
+2. Server Site Rendering (SSR) ==>   getServersideProps() with revalidate
+    New Html file generate for every request.
+    Slower and less performance...
+
+** export getStaticProps() to get feature.
+
+## Mash-Gradient (Gradient Image Genarator)
+## Glassmorphism (Css genaratior for card)
+
+## getStaticProps() Rules
+1. It should be a page file. export from page file.
+2. Runs in Built time only
+3. getStaticProps is a server side stuff. It will not show in browser console or devtool source.
+
+export async function getStaticProps(context) {
+  return {
+    props: {
+      coffeStore : coffeStore,
+      // Send coffeStore value as props name coffeStore
+    }
+  }
+}
+
+export default function Home(props) {
+  props.coffeStore 
+  // use this to preRender
+}
