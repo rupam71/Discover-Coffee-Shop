@@ -4,8 +4,23 @@ import Banner from '../components/banner'
 import Card from '../components/card'
 import styles from '../styles/Home.module.css'
 import coffeStoreData from '../data/coffee-store.json';
+import {coffeeApiKey, Authorization } from '../secret'
 
 export async function getStaticProps(context) {
+  
+  const options = {
+    method: 'GET',
+    headers: {
+      Accept: 'application/json',
+      Authorization: Authorization()
+    }
+  };
+  
+  fetch(coffeeApiKey(), options)
+    .then(response => response.json())
+    .then(response => console.log(response))
+    .catch(err => console.error(err));
+
   return {
     props: {
       coffeStore : coffeStoreData,
