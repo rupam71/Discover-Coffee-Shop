@@ -19,7 +19,13 @@
     display: block;
     color: var(--text-purple);
   }
+  .err{
+    margin-top: 4rem;
+    font-size: 1.1rem; /* 24px */
+    line-height: 2rem; /* 32px */
   
+    color: black;
+  }
   .subTitle {
     margin-top: 0.75rem;
     font-size: 1.5rem; /* 24px */
@@ -41,6 +47,8 @@
     padding: 1rem 2.5rem; /* 16px 40px */
     font-size: 1.125rem;
     line-height: 1.75rem;
+    position: absolute;
+    z-index: 2;
   }
   
   .button:hover {

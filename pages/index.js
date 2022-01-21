@@ -5,34 +5,49 @@ import Card from '../components/card'
 import styles from '../styles/Home.module.css'
 import coffeStoreData from '../data/coffee-store.json';
 import {coffeeApiKey, Authorization } from '../secret'
+import getCoffeeShop from '../fetchCall/getCoffeeShop'
+import useTrackLocation from '../hook/use-trackLocation'
 
 export async function getStaticProps(context) {
+
+  const w = await getCoffeeShop()
+  // console.log('3333',w)
+  // var t = []
+  // const options = {
+  //   method: 'GET',
+  //   headers: {
+  //     Accept: 'application/json',
+  //     Authorization: Authorization()
+  //   }
+  // };
   
-  const options = {
-    method: 'GET',
-    headers: {
-      Accept: 'application/json',
-      Authorization: Authorization()
-    }
-  };
-  
-  fetch(coffeeApiKey(), options)
-    .then(response => response.json())
-    .then(response => console.log(response))
-    .catch(err => console.error(err));
+  // await fetch(coffeeApiKey(), options)
+  //  // .then(response => response.json())
+  //   .then(async(response) => {
+  //     var r = await response.json()
+  //     t = r.results
+  //     console.log(t)
+  //   })
+  //   .catch(err => console.error(err))
 
   return {
     props: {
-      coffeStore : coffeStoreData,
+      coffeStore : w,
       // Send coffeStore value as props name coffeStore
     }
   }
 }
 
 export default function Home(props) {
- // console.log('props',props)
-  const handleOnBannerButtonClick = () => {
+  const {handleTrackLocation, LatLong, locationErrMsg, isFindingLocation} =useTrackLocation()
+  console.log('props',props.coffeStore)
+  console.log({LatLong, locationErrMsg})
+
+  const handleOnBannerButtonClick = async() => {
     console.log('Hi Banner Button Click...')
+    await handleTrackLocation()
+   // console.log('LatLong',LatLong, 'locationErrMsg',locationErrMsg)
+    
   }
   return (
     <div className={styles.container}>
@@ -44,9 +59,11 @@ export default function Home(props) {
 
       <main className={styles.main}>
         <Banner 
-        buttonText = 'View Store Nearby'
+        err = {locationErrMsg?locationErrMsg:''}
+        buttonText = {isFindingLocation ? 'Locating.... ':'View Store Nearby'}
         handleOnClick = {handleOnBannerButtonClick}
         />
+        
         <div className={styles.heroImage}>
           <Image src='/static/hero-image.png' 
           width={700} height={400}
@@ -57,11 +74,11 @@ export default function Home(props) {
             <div className={styles.cardLayout}>
               {props.coffeStore.map(ele => (
                 <Card
-                  key={ele.id}
+                  key={ele.fsq_id}
                   className={styles.card}
                   name={ele.name}
-                  imgUrl={ele.imgUrl}
-                  href={`/coffee-store/${ele.id}`}
+                  imgUrl={ele.imgUrl || "https://images.unsplash.com/photo-1498804103079-a6351b050096?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2468&q=80"}
+                  href={`/coffee-store/${ele.fsq_id}`}
                 />
               ))}
             </div>

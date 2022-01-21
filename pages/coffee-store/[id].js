@@ -3,18 +3,22 @@ import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import CoffeStoreData from "../../data/coffee-store.json";
+// import CoffeStoreData from "../../data/coffee-store.json";
 import styles from "../../styles/coffee-store.module.css";
 import  cls  from "classnames";
+import getCoffeeShop from "../../fetchCall/getCoffeeShop";
+import { Authorization, coffeeApiKey } from "../../secret";
 
-export function getStaticProps(staticProps) {
+export async function getStaticProps(staticProps) {
   const params = staticProps.params;
   // staticProps is pre-build
-  console.log("1", params);
+
+  // call get api here
+  var t = await getCoffeeShop()
   return {
     props: {
-      coffeStore: CoffeStoreData.find((ele) => {
-        return ele.id.toString() === params.id;
+      coffeStore: t.find((ele) => {
+        return ele.fsq_id.toString() === params.id;
         //if params id match then preRender
       }),
     },
@@ -22,11 +26,13 @@ export function getStaticProps(staticProps) {
 }
 
 // Give next js a list of paths
-export function getStaticPaths() {
-  const paths = CoffeStoreData.map((ele) => {
+export async function getStaticPaths() {
+  // call get api here
+  var t = await getCoffeeShop()
+ const paths = t.map((ele) => {
     return {
       params: {
-        id: ele.id.toString(),
+        id: ele.fsq_id
       },
     };
   });
@@ -49,8 +55,7 @@ const CoffeStore = (props) => {
   if (router.isFallback) return <div>Loading...</div>;
 
   // props should be next to router.isFallback
-  const { address, name, neighbourhood, imgUrl } = props.coffeStore;
-
+  const { location, name, neighbourhood, imgUrl,distance } = props.coffeStore;
   const handleUpvoteButton = () => {
     console.log('Up Vote !!')
   }
@@ -65,7 +70,7 @@ const CoffeStore = (props) => {
         <div className={styles.col1}>
           <div className={styles.backToHomeLink}>
             <Link href="/">
-              <a>Back To Home</a>
+              <a> Back To Home</a>
             </Link>
           </div>
           <div className={styles.nameWrapper}>
@@ -73,7 +78,7 @@ const CoffeStore = (props) => {
           </div>
 
           <Image
-            src={imgUrl}
+            src={imgUrl || "https://images.unsplash.com/photo-1498804103079-a6351b050096?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2468&q=80"}
             width={600}
             height={360}
             className={styles.storeImg}
@@ -84,11 +89,11 @@ const CoffeStore = (props) => {
         <div className={cls("glass", styles.col2)}>
           <div className={styles.iconWrapper}>
             <Image src="/static/icons/places.svg" width={24} height={24} />
-            <p className={styles.text}>{address}</p>
+            <p className={styles.text}>{location.address || location.locality}</p>
           </div>
           <div className={styles.iconWrapper}>
             <Image src="/static/icons/nearMe.svg" width={24} height={24} />
-            <p className={styles.text}>{neighbourhood}</p>
+            <p className={styles.text}>{location.region}</p>
           </div>
           <div className={styles.iconWrapper}>
             <Image src="/static/icons/star.svg" width={24} height={24} />

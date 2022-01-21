@@ -10,6 +10,7 @@ const Banner = (props) => {
         <button className={style.button} onClick={props.handleOnClick}>
             {props.buttonText}
         </button>
+        {props.err && <p className={style.err}>{`Something Went Wrong : ${props.err}`}</p>}
     </div>
 }
  
