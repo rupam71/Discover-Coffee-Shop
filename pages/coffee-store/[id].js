@@ -15,12 +15,17 @@ export async function getStaticProps(staticProps) {
 
   // call get api here
   var t = await getCoffeeShop()
+  
+  const y = t.find((ele) => {
+    return ele.fsq_id.toString() === params.id;
+    //if params id match then preRender
+  });
+
   return {
     props: {
-      coffeStore: t.find((ele) => {
-        return ele.fsq_id.toString() === params.id;
-        //if params id match then preRender
-      }),
+      // if ele y exists then print
+      // else emply page "{}" load in the client side
+      coffeStore: y ? y : {}
     },
   };
 }
@@ -89,11 +94,11 @@ const CoffeStore = (props) => {
         <div className={cls("glass", styles.col2)}>
           <div className={styles.iconWrapper}>
             <Image src="/static/icons/places.svg" width={24} height={24} />
-            <p className={styles.text}>{location.address || location.locality}</p>
+            <p className={styles.text}>{location?.address || location?.locality }</p>
           </div>
           <div className={styles.iconWrapper}>
             <Image src="/static/icons/nearMe.svg" width={24} height={24} />
-            <p className={styles.text}>{location.region}</p>
+            <p className={styles.text}>{location?.region}</p>
           </div>
           <div className={styles.iconWrapper}>
             <Image src="/static/icons/star.svg" width={24} height={24} />
