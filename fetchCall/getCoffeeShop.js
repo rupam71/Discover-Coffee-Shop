@@ -21,7 +21,7 @@ const getListOfPhotoUrls = async() => {
   return photoResponse
 }
 
-export default async function(){
+export default async function(latlong="19.0754324,72.8656654"){
   const photos = await getListOfPhotoUrls()
 
   const options = {
@@ -32,9 +32,10 @@ export default async function(){
     }
   };
   
-  const response = await fetch(coffeeApiKey(), options)
+  const response = await fetch(coffeeApiKey(latlong), options)
 
   var r = await response.json()
+  
   var x = r.results.map((ele,index)=> { 
     return{
       ...ele,

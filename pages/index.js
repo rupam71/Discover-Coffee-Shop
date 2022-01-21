@@ -7,29 +7,11 @@ import coffeStoreData from '../data/coffee-store.json';
 import {coffeeApiKey, Authorization } from '../secret'
 import getCoffeeShop from '../fetchCall/getCoffeeShop'
 import useTrackLocation from '../hook/use-trackLocation'
+import { useEffect, useState } from 'react'
 
 export async function getStaticProps(context) {
-
   const w = await getCoffeeShop()
-  // console.log('3333',w)
-  // var t = []
-  // const options = {
-  //   method: 'GET',
-  //   headers: {
-  //     Accept: 'application/json',
-  //     Authorization: Authorization()
-  //   }
-  // };
-  
-  // await fetch(coffeeApiKey(), options)
-  //  // .then(response => response.json())
-  //   .then(async(response) => {
-  //     var r = await response.json()
-  //     t = r.results
-  //     console.log(t)
-  //   })
-  //   .catch(err => console.error(err))
-
+ 
   return {
     props: {
       coffeStore : w,
@@ -43,6 +25,19 @@ export default function Home(props) {
   console.log('props',props.coffeStore)
   console.log({LatLong, locationErrMsg})
 
+  const [coffeStores, setcoffeStores] = useState('');
+  const [coffeStoresError, setcoffeStoresError] = useState('');
+
+  useEffect(async() => {
+      if(LatLong) try {
+        const w = await getCoffeeShop(LatLong)
+        console.log({w})
+        setcoffeStores(w)
+      } catch (error) {
+        console.log(error)
+        setcoffeStoresError(error.message)
+      }
+  }, [LatLong]);
   const handleOnBannerButtonClick = async() => {
     console.log('Hi Banner Button Click...')
     await handleTrackLocation()
@@ -59,7 +54,8 @@ export default function Home(props) {
 
       <main className={styles.main}>
         <Banner 
-        err = {locationErrMsg?locationErrMsg:''}
+        err = {locationErrMsg ? locationErrMsg :
+          coffeStoresError ? coffeStoresError :''}
         buttonText = {isFindingLocation ? 'Locating.... ':'View Store Nearby'}
         handleOnClick = {handleOnBannerButtonClick}
         />
@@ -68,8 +64,26 @@ export default function Home(props) {
           <Image src='/static/hero-image.png' 
           width={700} height={400}
           />
-          {coffeStoreData.length>0 && 
-          <div>
+
+        {coffeStores.length>0 && 
+          <div className={styles.sectionWrapper}>
+            <h2 className={styles.heading2}>Stores Near Me</h2>
+            <div className={styles.cardLayout}>
+              {coffeStores.map(ele => (
+                <Card
+                  key={ele.fsq_id}
+                  className={styles.card}
+                  name={ele.name}
+                  imgUrl={ele.imgUrl || "https://images.unsplash.com/photo-1498804103079-a6351b050096?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2468&q=80"}
+                  href={`/coffee-store/${ele.fsq_id}`}
+                />
+              ))}
+            </div>
+          </div>
+          }
+
+          {coffeStores.length == 0 && props.coffeStore.length>0 && 
+          <div className={styles.sectionWrapper}>
             <h2 className={styles.heading2}>Toronto Stores</h2>
             <div className={styles.cardLayout}>
               {props.coffeStore.map(ele => (
