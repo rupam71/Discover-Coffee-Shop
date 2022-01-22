@@ -38,14 +38,14 @@ export default function Home(props) {
   // use context state.latLong here
   useEffect(async() => {
       if(latLong) try {
-        const w = await getCoffeeShop(latLong)
-        console.log({w})
+        const res = await fetch(`/api/getCoffeeStoresByLocation?latLong=${latLong}`)
     //    setcoffeStores(w)
-
+        const w = await res.json()
         dispatch({
           type : ActionTypes.SET_COFFEE_STORES,
           payload : w
         })
+        setcoffeStoresError('')
       } catch (error) {
         console.log(error)
         setcoffeStoresError(error.message)
