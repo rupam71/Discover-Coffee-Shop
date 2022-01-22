@@ -7,7 +7,10 @@ import coffeStoreData from '../data/coffee-store.json';
 import {coffeeApiKey, Authorization } from '../secret'
 import getCoffeeShop from '../fetchCall/getCoffeeShop'
 import useTrackLocation from '../hook/use-trackLocation'
-import { useEffect, useState } from 'react'
+
+// import context
+import { useEffect, useState, useContext } from 'react'
+import { ActionTypes,storeContext } from './../store/store-context';
 
 export async function getStaticProps(context) {
   const w = await getCoffeeShop()
@@ -25,19 +28,29 @@ export default function Home(props) {
   console.log('props',props.coffeStore)
   console.log({LatLong, locationErrMsg})
 
-  const [coffeStores, setcoffeStores] = useState('');
+//  const [coffeStores, setcoffeStores] = useState('');
   const [coffeStoresError, setcoffeStoresError] = useState('');
-
+  
+  // context dispatch, state and property
+  const {dispatch, state} = useContext(storeContext)
+  const {latLong,coffeeStores} = state;
+ 
+  // use context state.latLong here
   useEffect(async() => {
-      if(LatLong) try {
-        const w = await getCoffeeShop(LatLong)
+      if(latLong) try {
+        const w = await getCoffeeShop(latLong)
         console.log({w})
-        setcoffeStores(w)
+    //    setcoffeStores(w)
+
+        dispatch({
+          type : ActionTypes.SET_COFFEE_STORES,
+          payload : w
+        })
       } catch (error) {
         console.log(error)
         setcoffeStoresError(error.message)
       }
-  }, [LatLong]);
+  }, [latLong]);
   const handleOnBannerButtonClick = async() => {
     console.log('Hi Banner Button Click...')
     await handleTrackLocation()
@@ -65,11 +78,12 @@ export default function Home(props) {
           width={700} height={400}
           />
 
-        {coffeStores.length>0 && 
+        {/* Use context state.coffeeStores here. */}
+        {coffeeStores?.length>0 && 
           <div className={styles.sectionWrapper}>
             <h2 className={styles.heading2}>Stores Near Me</h2>
             <div className={styles.cardLayout}>
-              {coffeStores.map(ele => (
+              {coffeeStores.map(ele => (
                 <Card
                   key={ele.fsq_id}
                   className={styles.card}
@@ -82,7 +96,7 @@ export default function Home(props) {
           </div>
           }
 
-          {coffeStores.length == 0 && props.coffeStore.length>0 && 
+          {coffeeStores?.length === 0 && props.coffeStore.length>0 && 
           <div className={styles.sectionWrapper}>
             <h2 className={styles.heading2}>Toronto Stores</h2>
             <div className={styles.cardLayout}>

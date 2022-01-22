@@ -8,6 +8,7 @@ import styles from "../../styles/coffee-store.module.css";
 import  cls  from "classnames";
 import getCoffeeShop from "../../fetchCall/getCoffeeShop";
 import { Authorization, coffeeApiKey } from "../../secret";
+import { storeContext } from './../../store/store-context';
 
 export async function getStaticProps(staticProps) {
   const params = staticProps.params;
